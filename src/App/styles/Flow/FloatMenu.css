@@ -1,0 +1,29 @@
+.float-menu-container{
+    display: flex;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    margin: 20px;
+    padding: 10px;
+    z-index: 10;
+}
+
+.option{
+    width: 100px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    transition: 300ms;
+}
+
+.option:hover{
+    transition: 300ms;
+    
+}
+
+.opt-span{
+    padding: 5px;
+}

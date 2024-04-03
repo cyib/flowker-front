@@ -1,0 +1,99 @@
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+  
+    100% {
+        opacity: 1;
+    }
+  }
+
+.__dashboard__ {
+    animation: fadeIn 300ms ease-in;
+
+    overflow: hidden;
+
+    .dash-container{
+        display: flex;
+        height: 100vh;
+        flex-direction: row;
+        background-color: #131313;
+    
+        .side-menu {
+            width: 64px;
+            background-color: #1a1a1a;
+            border-radius: 7px;
+            margin: 5px;
+            margin-top: 60px;
+            margin-right: 0px;
+            margin-left: 5px;
+            border: solid 1px #505050;
+            transition: 200ms;
+
+            .item{
+                
+                width: 100%;
+
+                .item-name{
+                    margin: 5px;
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: solid 1px #858585;
+                    background-color: rgb(29 58 86);
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    flex-direction: row;
+                    align-content: center;
+                    align-items: center;
+                    justify-content: flex-start;
+                    transition: 300ms;
+
+                    .icon{
+                        height: 30px;
+                        width: 30px;
+                    }
+                }
+
+                .item-name:hover{
+                    background-color:  rgb(74, 111, 147);
+                    border: solid 1px white;
+                    transition: 50ms;
+                }
+
+                .item-name:active{
+                    background-color:  rgb(231, 231, 231);
+                }
+            }
+
+            span{
+                width: 0%;
+                opacity: 0;
+                transition: 100ms;
+                padding-left: 5px;
+            }
+        }
+
+        .side-menu:hover{
+            width: 250px;
+
+            span{
+                width: inherit;
+                opacity: 1;
+            }
+        }
+    
+        .content-container {
+            width: 100%;
+            background-color: #353535;
+            border-radius: 7px;
+            margin: 5px;
+            margin-top: 60px;
+            border: solid 1px #111111;
+        }
+    }
+}
+
+#root {
+    background-color: #1c1c1c;
+}

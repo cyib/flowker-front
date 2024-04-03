@@ -1,0 +1,14 @@
+.node-io-container {
+    margin: 10px;
+    border-radius: 5px;
+    padding-bottom: 10px;
+    height: 100%;
+}
+
+.inp-box {
+    border: solid 1px #8db0d3;
+}
+
+.out-box {
+    border: solid 1px #d2d38d;
+}

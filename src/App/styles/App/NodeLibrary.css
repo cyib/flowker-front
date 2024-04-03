@@ -1,0 +1,12 @@
+
+.node-library{
+    .library-node-item{
+        background-color: whitesmoke;
+    }
+    
+    .library-node-item:hover{
+    }
+    
+    .library-node-item:active{
+    }
+}

@@ -1,0 +1,24 @@
+.App {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.App-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 0 1rem;
+}
+
+.offcanvas, .offcanvas-lg, .offcanvas-md, .offcanvas-sm, .offcanvas-xl, .offcanvas-xxl{
+  --bs-offcanvas-transition: transform 0.1s ease-in-out;
+}
+
+.prevent-select, .no-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}

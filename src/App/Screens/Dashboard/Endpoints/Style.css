@@ -1,0 +1,157 @@
+.endpoint-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    .option {
+        all: unset;
+        display: flex;
+        padding: 10px;
+        background-color: #234260;
+        margin: 5px;
+        border-radius: 5px;
+        color: rgb(224, 224, 224);
+        cursor: pointer;
+        min-width: 120px;
+        border: solid 1px #646464;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .option:hover {
+        background-color: #426a92;
+        color: white;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #ffffff00;
+    transition: 300ms;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #4c657d;
+    border-radius: 4px;
+    border: solid 1px #444444;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4c657d;
+    border: solid 1px #444444;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: #617f9c;
+    border: solid 1px #646464;
+  }
+
+.endpoint-library {
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+    overflow-y: scroll;
+    max-height: 80vh;
+    background-color: #444444;
+    border:  solid 1px #282828;
+    border-radius: 5px;
+    margin: 5px;
+    box-shadow: inset 0px -10px 39px 15px rgba(54,54,54,1);
+
+    .library-node-item {
+        background-color: transparent;
+        border-radius: 5px;
+        border: solid 1px #717171;
+        border-bottom: solid 1px #717171;
+        color: white;
+        transition: 200ms;
+        cursor: pointer;
+        z-index: 1;
+
+        .card-title {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: flex-start;
+            align-items: center;
+
+            a {
+                all: unset;
+                margin-left: 5px;
+            }
+        }
+
+        .float-node-container {
+            position: absolute;
+            display: flex;
+            transition: 300ms;
+            top: 5px;
+            right: 5px;
+        }
+
+        .float-node-btn {
+            padding-inline: 5px;
+            border-radius: 5px;
+
+            span {
+                margin-left: 5px;
+                font-size: 14px;
+            }
+        }
+
+        a {
+            all: unset;
+        }
+    }
+
+    .library-node-item:hover {
+        background-color: #f0f8ff1a;
+        border-radius: 3px;
+        border: solid 1px white;
+
+        .float-node-btn:hover {
+            background-color: #ffffff24;
+        }
+    }
+
+    .url-copy-container {
+        .input-group {
+            position: relative;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            width: 100%;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .btn-copy-url {
+            height: 30px;
+            background-color: white;
+            transition: 200ms;
+        }
+
+        .btn-copy-url:hover {
+            background-color: #234260;
+            color: white;
+        }
+
+        .url-input {
+            font-size: 12px;
+            margin: 0px;
+            padding: 0px;
+            height: 30px;
+        }
+
+    }
+
+
+}
