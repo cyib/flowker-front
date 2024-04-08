@@ -1,6 +1,6 @@
 import { type FC, useState, useEffect } from 'react';
-import { Button, Card, Col, Form, FormSelect, InputGroup, Row } from 'react-bootstrap';
-import { HiBeaker, HiClipboardCopy, HiCode, HiExternalLink, HiOutlineClipboardCopy, HiOutlinePlus, HiPlay } from "react-icons/hi";
+import { Card, Col, Form, FormSelect, InputGroup, Row } from 'react-bootstrap';
+import { HiCode, HiExternalLink, HiOutlineClipboardCopy, HiOutlinePlus, HiPlay } from "react-icons/hi";
 import { TiFlowChildren } from "react-icons/ti";
 import { IoLogoPython } from "react-icons/io";
 
@@ -18,7 +18,7 @@ const Endpoints: FC<any> = ({ text }) => {
   const resetCurrFlowNode = useResetRecoilState(Atoms.currFlowNode);
 
   const setCurrentNode = useSetRecoilState(Atoms.currentNode as any);
-  const setIsEditorModalOpen = useSetRecoilState(Atoms.isEditorModalOpen);
+  const [isEditorModalOpen, setIsEditorModalOpen] = useRecoilState(Atoms.isEditorModalOpen);
   const setEditionType = useSetRecoilState(Atoms.editNodeType);
 
   const [isResultModalOpen, setIsResultModalOpen] = useRecoilState(Atoms.isResultModalOpen);
@@ -28,9 +28,26 @@ const Endpoints: FC<any> = ({ text }) => {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
+    endpointsRequest();
+  }, []);
+
+  useEffect(() => {
+    if(!isEditorModalOpen){
+      setRepository([]);
+      setTimeout(() => {
+        endpointsRequest();
+      }, 100);
+    }
+  }, [isEditorModalOpen]);
+
+  useEffect(() => {
+    console.log('refresh', repository);
+  }, [refresh]);
+
+  const endpointsRequest = () => {
     const fetchData = async () => {
       try {
-        const res = await http.get('/repository');
+        const res = await http.get('/repository?onlyendpoints=true');
         const data = res.data.map((e: INodeRepository) => { e.selectedId = e.id; return e });
         setRepository(data);
       } catch (error) {
@@ -38,11 +55,7 @@ const Endpoints: FC<any> = ({ text }) => {
       }
     };
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    console.log('refresh', repository);
-  }, [refresh]);
+  }
 
   async function runNodeById(id: string): Promise<any> {
     const result: any = (await http.get(`/run/node/${id}`)).data;
@@ -111,6 +124,7 @@ const Endpoints: FC<any> = ({ text }) => {
                           node.type == 'script' ?
                             <div onClick={async () => {
                               let _node = await getNodeById(node.selectedId || node.id);
+                              console.log('selected node', _node);
                               setEditionType('child');
                               setCurrentNode(_node);
                               setIsEditorModalOpen(true);

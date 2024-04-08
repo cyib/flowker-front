@@ -10,6 +10,8 @@ export interface INode {
     inputs?: IParams[],
     outputs?: IParams[],
     originalNodeId?: string|null,
+    environmentId?: string|null,
+    isEndpoint?: boolean|null,
     script?: string|null,
     version?: string|number|null
 }

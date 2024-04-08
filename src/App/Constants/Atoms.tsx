@@ -15,6 +15,8 @@ export default {
             script: null,
             author: null,
             originalNodeId: null,
+            environmentId: '00000000-0000-0000-0000-000000000001',
+            isEndpoint: false,
             versionList: [],
             description: '',
             version: '0.0.1',
@@ -31,6 +33,8 @@ export default {
             script: null,
             author: null,
             originalNodeId: null,
+            environmentId: '00000000-0000-0000-0000-000000000001',
+            isEndpoint: false,
             versionList: [],
             description: '',
             version: '0.0.1',
@@ -44,6 +48,24 @@ export default {
     isLibraryModalOpen: atom({
         key: 'isLibraryModalOpen',
         default: false
+    }),
+    isEnvironmentEditorModalOpen: atom({
+        key: 'isEnvironmentEditorModalOpen',
+        default: false
+    }),
+    isEnvironmentLogModalOpen: atom({
+        key: 'isEnvironmentLogModalOpen',
+        default: false
+    }),
+    currentEnvironment: atom({
+        key: 'currentEnvironment',
+        default: { 
+            id: null, 
+            name: null,
+            description: null,
+            color: null,
+            upgradeLog: null
+        }
     }),
     isResultModalOpen: atom({
         key: 'isResultModalOpen',

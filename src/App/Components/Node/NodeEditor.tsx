@@ -1,37 +1,49 @@
-import { useState, type FC, useEffect } from 'react';
+import { useState, type FC, useEffect, ChangeEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { useRecoilState } from 'recoil';
 import Atoms from '../../Constants/Atoms';
-import { Form } from 'react-bootstrap';
+import { Form, FormSelect } from 'react-bootstrap';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import IoSelector from '../Extras/IoSelector/IoSelector';
 import { FaPlay, FaReplyAll, FaRegSave } from 'react-icons/fa';
 import { VscDiscard, VscRunAll } from 'react-icons/vsc';
 import '../../styles/App/NodeEditor.css';
 import http from '../../Services/http.service';
+import { SiVisualstudiocode } from "react-icons/si";
+import { IEnvironment } from '../../Constants/Interfaces/Environment';
 
 const NodeEditor: FC<any> = ({ data }) => {
   const [editNodeType, setEditNodeType] = useRecoilState(Atoms.editNodeType);
   const [currentNode, setCurrentNode] = useRecoilState(
-    editNodeType == 'child' ? Atoms.currentNode : 
-    Atoms.currFlowNode
+    editNodeType == 'child' ? Atoms.currentNode :
+      Atoms.currFlowNode
   ) as any;
   const [terminal, setTerminal] = useState('');
   const [output, setOutput] = useState('');
   const [show, setShow] = useRecoilState(Atoms.isEditorModalOpen);
   const [saving, setSaving] = useState(false);
+  const [environments, setEnvironments] = useState<IEnvironment[]>([]);
+  const [selectedEnvironment, setSelectedEnvironment] = useState<IEnvironment>();
 
   useEffect(() => {
     if (show) {
+      console.log('open editor', currentNode);
+      let w: any = window;
+      getAllEnvironments();
+      clearInterval(w['externalCheckerInterval']);
       setTerminal('');
       setOutput('');
     }
   }, [show]);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    let w: any = window;
+    clearInterval(w['externalCheckerInterval']);
+    setShow(false);
+  };
   const handleShow = () => setShow(true);
 
   const handleInputChange = async (e: any) => {
@@ -39,6 +51,7 @@ const NodeEditor: FC<any> = ({ data }) => {
     let _currNode: any = { ...currentNode };
     _currNode[name] = value;
     setCurrentNode(_currNode);
+    console.log(_currNode);
   }
 
   const handleSaveClick = async () => {
@@ -46,6 +59,28 @@ const NodeEditor: FC<any> = ({ data }) => {
     let res = await http.post('/create/minor', currentNode);
     setSaving(false);
     setShow(false);
+  }
+
+  const getAllEnvironments = async () => {
+    try {
+      const res = await http.get('/environment/get/all');
+      if (res.data && res.data.environments) {
+        const environments: IEnvironment[] = res.data.environments;
+        setEnvironments(environments);
+      }
+    } catch (error) {
+      console.error('Error fetching environment list: ', error);
+    }
+  };
+
+  const changeEnvironment = (event: ChangeEvent) => {
+    let selectedId = (event.target as HTMLSelectElement).value;
+    let selected: IEnvironment = environments.find(env => env.id == selectedId) as IEnvironment;
+    setSelectedEnvironment(selected);
+
+    let _currNode: any = { ...currentNode };
+    _currNode['environmentId'] = selectedId;
+    setCurrentNode(_currNode);
   }
 
   const runCurrent = async () => {
@@ -67,6 +102,22 @@ const NodeEditor: FC<any> = ({ data }) => {
     setSaving(false);
   };
 
+  const openExternalEditor = () => {
+    let url: any = (`vscode://file/D:\\Projects\\flowker\\client\\scripts\\${currentNode.id}.py`) as string;
+    window.open(url, '_blank')?.focus();
+
+    let w: any = window;
+    clearInterval(w['externalCheckerInterval']);
+    w['externalCheckerInterval'] = setInterval(async () => {
+      let codeFromExternal = (await http.get(`/get/script/raw/${currentNode.id}`)).data;
+      let _currNode: any = { ...currentNode };
+      if (_currNode.script !== codeFromExternal) {
+        _currNode.script = codeFromExternal;
+        setCurrentNode(_currNode);
+      }
+    }, 1500);
+  }
+
   return (
     <>
       <Offcanvas show={show} onHide={handleClose} placement={editNodeType == 'child' ? 'end' : 'start'} style={{
@@ -82,7 +133,7 @@ const NodeEditor: FC<any> = ({ data }) => {
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Row>
-                <Col sm={10}>
+                <Col sm={4}>
                   <Form.Label style={{ fontSize: 14 }}>Node name</Form.Label>
                   <Form.Control type="text" size='sm' placeholder={`Write the ${currentNode.nodeType} name`}
                     value={currentNode.name ? currentNode.name : ''}
@@ -90,14 +141,37 @@ const NodeEditor: FC<any> = ({ data }) => {
                     onChange={(event) => handleInputChange(event)}
                   />
                 </Col>
-                <Col sm={2}>
-                  <Form.Label style={{ fontSize: 14 }}>Version</Form.Label>
-                  <Form.Control type="text" size='sm' placeholder="version"
-                    value={currentNode.version}
-                    name={'version'}
-                    disabled
+                <Col sm={5}>
+                  <Form.Label style={{ fontSize: 14 }}>Environment / Context / Project</Form.Label>
+                  <FormSelect onChange={changeEnvironment} size='sm' value={currentNode.environmentId ? currentNode.environmentId : '00000000-0000-0000-0000-000000000001'}>
+                    {environments.map((env: any) => <option value={env.id} key={`option-${env.id}`}>{env.name}</option>)}
+                  </FormSelect>
+                </Col>
+                <Col sm={1}>
+                  <Form.Label style={{ fontSize: 14 }}>Public</Form.Label>
+                  <Form.Check
+                    type="switch"
+                    name={'isEndpoint'}
+                    checked={currentNode.isEndpoint}
+                    onChange={(event) => {
+                      let val = event.target.checked;
+                      let _currNode: any = { ...currentNode };
+                      _currNode.isEndpoint = val;
+                      setCurrentNode(_currNode);
+                    }}
                   />
                 </Col>
+                {
+                  !currentNode.name || currentNode.name == '' ? <></> :
+                    <Col sm={2}>
+                      <Form.Label style={{ fontSize: 14 }}>Version</Form.Label>
+                      <Form.Control type="text" size='sm' placeholder="version"
+                        value={currentNode.version}
+                        name={'version'}
+                        disabled
+                      />
+                    </Col>
+                }
               </Row>
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput1">
@@ -112,10 +186,17 @@ const NodeEditor: FC<any> = ({ data }) => {
             </Form.Group>
             {currentNode.nodeType == 'script' ?
               <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                {
+                  !currentNode.name || currentNode.name == '' ? <></> :
+                    <div style={{ paddingBottom: 15 }}>
+                      <Button onClick={openExternalEditor}>Open in VSCode <SiVisualstudiocode /></Button>
+                    </div>
+                }
+
                 <Form.Label>Script editor</Form.Label>
                 <div style={{
-                  height: 300,
-                  minHeight: 300,
+                  height: 120,
+                  minHeight: 120,
                   overflowY: 'auto',
                   backgroundColor: "#212121",
                 }}>
@@ -193,8 +274,8 @@ const NodeEditor: FC<any> = ({ data }) => {
                 <br />
                 <Row>
                   <Col sm={4}>
-                    <Button variant='danger' onClick={() => console.log(currentNode)} style={{ width: '100%' }}>
-                      <VscDiscard /> DISCARD
+                    <Button variant='danger' onClick={handleClose} style={{ width: '100%' }}>
+                      <VscDiscard /> CLOSE
                     </Button>
                   </Col>
                   <Col sm={4}>

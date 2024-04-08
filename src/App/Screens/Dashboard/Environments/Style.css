@@ -1,3 +1,12 @@
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
 .environment-screen{
     .title{
         font-size: 24px;
@@ -5,7 +14,50 @@
         padding: 10px;
     }
 
+    .btn-new-env{
+        background-color: #1d3a56;
+    }
+
+    .btn-new-env:hover {
+        background-color: #3177dc;
+        border-color: #bbbbbb;
+    }
+
     .env-selector-container{
         padding: 10px;
+    }
+
+    .env-config-container{
+        padding: 10px;
+        color: white;
+    }
+    
+    .w-tc-editor{
+        border-radius: 5px;
+    }
+
+    .btn-upgrade{
+        svg{
+            padding-right: 3px;
+            path{
+                stroke: #0dcaf0;
+                transition: 200ms;
+            }
+        }
+    }
+
+    .upgrading{
+        svg{
+            animation: rotation 1s linear infinite;
+            padding: 3px;
+        }
+    }
+
+    .btn-upgrade:hover{
+        svg{
+            path{
+                stroke: black;
+            }
+        }
     }
 }

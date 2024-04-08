@@ -13,6 +13,8 @@ import http from './Services/http.service';
 import Dashboard from './Screens/Dashboard/Dashboard';
 import NodeResult from './Components/Node/NodeResult';
 import NodeEditor from './Components/Node/NodeEditor';
+import EnvironmentCreator from './Components/Environment/EnvironmentCreator';
+import EnvironmentLog from './Components/Environment/EnvironmentLog';
 
 const router = createBrowserRouter([
   {
@@ -65,6 +67,8 @@ function App() {
     <RecoilRoot>
       <NodeResult />
       <NodeEditor />
+      <EnvironmentCreator/>
+      <EnvironmentLog/>
       <RouterProvider router={router} />
     </RecoilRoot>
   );
