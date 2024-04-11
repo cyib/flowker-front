@@ -39,7 +39,7 @@
                     padding: 10px;
                     border-radius: 5px;
                     border: solid 1px #858585;
-                    background-color: rgb(29 58 86);
+                    background-color: #0e2a44;
                     color: white;
                     cursor: pointer;
                     display: flex;
@@ -90,6 +90,44 @@
             margin: 5px;
             margin-top: 60px;
             border: solid 1px #111111;
+        }
+    }
+
+    .cardTitle{
+        display: flex;
+        flex-direction: column;
+
+        .title{
+            padding-block: 5px;
+        }
+
+        .baseInfos{
+            display: flex;
+            flex-direction: row;
+
+            .envTitle{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #00000025;
+                margin-left: 5px;
+                padding-inline: 15px;
+                font-size: 10px;
+                text-transform: uppercase;
+                border-radius: 3px;
+            }
+    
+            .endpointType{    
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-transform: uppercase;
+                border: solid 1px gray;
+                font-size: 10px;
+                border-radius: 3px;
+                width: 50px;
+                height: 25px;
+            }
         }
     }
 }

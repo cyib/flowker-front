@@ -56,7 +56,7 @@ const NodeEditor: FC<any> = ({ data }) => {
 
   const handleSaveClick = async () => {
     setSaving(true);
-    let res = await http.post('/create/minor', currentNode);
+    let res = await http.post('/node/create/minor', currentNode);
     setSaving(false);
     setShow(false);
   }
@@ -86,7 +86,7 @@ const NodeEditor: FC<any> = ({ data }) => {
   const runCurrent = async () => {
     setSaving(true);
     try {
-      const runResult: any = await http.post(`/run/script/current`, currentNode);
+      const runResult: any = await http.post(`/node/run/script/current`, currentNode);
       let script_output: any = {};
       for (let key in runResult.data) {
         if (key !== '__execution__params__') script_output[key] = runResult.data[key];
@@ -109,7 +109,7 @@ const NodeEditor: FC<any> = ({ data }) => {
     let w: any = window;
     clearInterval(w['externalCheckerInterval']);
     w['externalCheckerInterval'] = setInterval(async () => {
-      let codeFromExternal = (await http.get(`/get/script/raw/${currentNode.id}`)).data;
+      let codeFromExternal = (await http.get(`/node/get/script/raw/${currentNode.id}`)).data;
       let _currNode: any = { ...currentNode };
       if (_currNode.script !== codeFromExternal) {
         _currNode.script = codeFromExternal;
@@ -134,7 +134,7 @@ const NodeEditor: FC<any> = ({ data }) => {
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Row>
                 <Col sm={4}>
-                  <Form.Label style={{ fontSize: 14 }}>Node name</Form.Label>
+                  <Form.Label style={{ fontSize: 14 }}>Node name <span style={{ fontSize: 9 }}>(Version: {currentNode.version})</span></Form.Label>
                   <Form.Control type="text" size='sm' placeholder={`Write the ${currentNode.nodeType} name`}
                     value={currentNode.name ? currentNode.name : ''}
                     name={'name'}
@@ -143,9 +143,9 @@ const NodeEditor: FC<any> = ({ data }) => {
                 </Col>
                 <Col sm={5}>
                   <Form.Label style={{ fontSize: 14 }}>Environment / Context / Project</Form.Label>
-                  <FormSelect onChange={changeEnvironment} size='sm' value={currentNode.environmentId ? currentNode.environmentId : '00000000-0000-0000-0000-000000000001'}>
+                  <Form.Select onChange={changeEnvironment} size='sm' value={currentNode.environmentId ? currentNode.environmentId : '00000000-0000-0000-0000-000000000001'}>
                     {environments.map((env: any) => <option value={env.id} key={`option-${env.id}`}>{env.name}</option>)}
-                  </FormSelect>
+                  </Form.Select>
                 </Col>
                 <Col sm={1}>
                   <Form.Label style={{ fontSize: 14 }}>Public</Form.Label>
@@ -161,7 +161,14 @@ const NodeEditor: FC<any> = ({ data }) => {
                     }}
                   />
                 </Col>
-                {
+                <Col sm={2}>
+                  <Form.Label style={{ fontSize: 14 }}>Type</Form.Label>
+                  <Form.Select size='sm' name='endpointType' value={currentNode.endpointType} onChange={(event) => handleInputChange(event)}>
+                    <option value="GET" key={`option-get`}>GET</option>
+                    <option value="POST" key={`option-post`}>POST</option>
+                  </Form.Select>
+                </Col>
+                {/* {
                   !currentNode.name || currentNode.name == '' ? <></> :
                     <Col sm={2}>
                       <Form.Label style={{ fontSize: 14 }}>Version</Form.Label>
@@ -171,7 +178,7 @@ const NodeEditor: FC<any> = ({ data }) => {
                         disabled
                       />
                     </Col>
-                }
+                } */}
               </Row>
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput1">

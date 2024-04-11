@@ -26,12 +26,8 @@ const router = createBrowserRouter([
     element: <><Dashboard /></>,
   },
   {
-    path: "/libraries",
-    element: <><Dashboard page={'libraries'}/></>,
-  },
-  {
-    path: "/databases",
-    element: <><Dashboard page={'databases'}/></>,
+    path: "/repository",
+    element: <><Dashboard page={'repository'}/></>,
   },
   {
     path: "/environments",
@@ -48,7 +44,7 @@ const router = createBrowserRouter([
   {
     path: "/flow/:nodeId",
     loader: async ({ params }) => {
-      const res = await http.get(`/get/snapshot/${params.nodeId}`);
+      const res = await http.get(`/node/get/snapshot/${params.nodeId}`);
       let node = null;
       if (res.data && res.data.snapshot) {
         node = res.data;

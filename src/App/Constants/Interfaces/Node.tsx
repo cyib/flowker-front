@@ -12,13 +12,21 @@ export interface INode {
     originalNodeId?: string|null,
     environmentId?: string|null,
     isEndpoint?: boolean|null,
+    endpointType?: 'GET'|'POST',
     script?: string|null,
     version?: string|number|null
 }
 
 export interface INodeRepository extends INode {
     selectedId: string,
-    versions: Array<any>
+    environmentName?: string|null,
+    versions: Array<INodeVersion>
+}
+
+export interface INodeVersion extends INode {
+    version?: string,
+    original?: boolean,
+    environmentName?: string,
 }
 
 export interface IParams {

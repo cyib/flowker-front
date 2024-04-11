@@ -170,7 +170,7 @@ function Flow() {
 
   const getNode = async (id: string) => {
     try {
-      const res = await http.get(`/get/${id}`);
+      const res = await http.get(`/node/get/${id}`);
       const data = res.data;
       return data;
     } catch (error) {
@@ -240,7 +240,7 @@ function Flow() {
       });
 
       let _payload = Object.assign({}, _currentFlowNode, { sequences: _edges, snapshot: JSON.parse(_snapshot) });
-      let res = await http.post('/create/minor', _payload);
+      let res = await http.post('/node/create/minor', _payload);
       if (res.data) {
         window.location.pathname = `/flow/${res.data}`
       }
@@ -268,7 +268,7 @@ function Flow() {
         outputs: _currentFlowNode.outputs.map((i: any) => { return { id: i.id, type: 'target', name: i.name } })
       }
 
-      const runResult: any = await http.post(`/run/sequence`, _payload);
+      const runResult: any = await http.post(`/node/run/sequence`, _payload);
       console.table(runResult.data);
       setLastNodeResult(runResult.data);
       setIsResultModalOpen(true);
