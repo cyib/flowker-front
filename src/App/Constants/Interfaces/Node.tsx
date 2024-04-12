@@ -34,3 +34,12 @@ export interface IParams {
     type: HandleType,
     name: string
   }
+
+export interface IIoItem { 
+    datatype: string, 
+    id: string, 
+    name: string,
+    required?: boolean,
+    orderNumber?: number,
+    defaultValue?: string|null,
+}

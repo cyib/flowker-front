@@ -59,6 +59,7 @@ const Environments: FC<any> = () => {
 
   const [upgrading, setUpgrading] = useState(false);
   const upgradeRequirements = async () => {
+    updateRequirements();
     if (selectedEnvironment) {
       setUpgrading(true);
       const res = await http.get(`/environment/upgrade/requirements/${selectedEnvironment.id}`);
