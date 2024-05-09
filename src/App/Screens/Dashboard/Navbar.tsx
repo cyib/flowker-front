@@ -12,7 +12,7 @@ function DashNavbar() {
       <Container fluid>
         <Navbar.Brand href="#" style={{ color: 'white' }}>
         <span style={{ fontSize: 20, fontFamily: 'monospace', fontWeight: 'bold'}}>&gt; flowker</span>
-        <span style={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 'lighter'}}>&nbsp;v0.32.2</span>
+        <span style={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 'lighter'}}>&nbsp;v0.41.2</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

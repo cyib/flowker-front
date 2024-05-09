@@ -86,6 +86,7 @@ const NodeEditor: FC<any> = ({ data }) => {
   const runCurrent = async () => {
     setSaving(true);
     try {
+      console.log('runCurrent', currentNode);
       const runResult: any = await http.post(`/node/run/script/current`, currentNode);
       let script_output: any = {};
       for (let key in runResult.data) {
