@@ -14,8 +14,11 @@ import '../../styles/App/NodeEditor.css';
 import http from '../../Services/http.service';
 import { SiVisualstudiocode } from "react-icons/si";
 import { IEnvironment } from '../../Constants/Interfaces/Environment';
+import { v4 as uuidv4 } from 'uuid';
+import { sleep } from '../Extras/utils/common';
 
 const NodeEditor: FC<any> = ({ data }) => {
+  const [externalId, setExternalId] = useState(uuidv4());
   const [editNodeType, setEditNodeType] = useRecoilState(Atoms.editNodeType);
   const [currentNode, setCurrentNode] = useRecoilState(
     editNodeType == 'child' ? Atoms.currentNode :
@@ -30,7 +33,6 @@ const NodeEditor: FC<any> = ({ data }) => {
 
   useEffect(() => {
     if (show) {
-      console.log('open editor', currentNode);
       let w: any = window;
       getAllEnvironments();
       clearInterval(w['externalCheckerInterval']);
@@ -40,9 +42,14 @@ const NodeEditor: FC<any> = ({ data }) => {
   }, [show]);
 
   const handleClose = () => {
-    let w: any = window;
-    clearInterval(w['externalCheckerInterval']);
-    setShow(false);
+    try {
+      let w: any = window;
+      clearInterval(w['externalCheckerInterval']);
+      clearExternalGarbage();
+      setShow(false);  
+    } catch (error) {
+      console.warn(error);
+    }
   };
   const handleShow = () => setShow(true);
 
@@ -51,14 +58,28 @@ const NodeEditor: FC<any> = ({ data }) => {
     let _currNode: any = { ...currentNode };
     _currNode[name] = value;
     setCurrentNode(_currNode);
-    console.log(_currNode);
   }
 
   const handleSaveClick = async () => {
-    setSaving(true);
-    let res = await http.post('/node/create/minor', currentNode);
-    setSaving(false);
-    setShow(false);
+    try {
+      setSaving(true);
+      let res = await http.post(`/node/create/minor?externalId=${externalId}`, currentNode);
+      if(res.status == 200) await clearExternalGarbage();
+      setSaving(false);
+      setShow(false);  
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  const clearExternalGarbage = async () => {
+    try {
+      let originalId = currentNode.id || 'new';
+      const clearExtenalConfirmation = await http.get(`/clear/external/garbage?nodeId=${originalId}&externalId=${externalId}`);
+      if (clearExtenalConfirmation.status == 200) console.log('External file cleared');
+    } catch (error) {
+      console.error('Error fetching environment list: ', error);
+    }
   }
 
   const getAllEnvironments = async () => {
@@ -86,7 +107,6 @@ const NodeEditor: FC<any> = ({ data }) => {
   const runCurrent = async () => {
     setSaving(true);
     try {
-      console.log('runCurrent', currentNode);
       const runResult: any = await http.post(`/node/run/script/current`, currentNode);
       let script_output: any = {};
       for (let key in runResult.data) {
@@ -103,18 +123,33 @@ const NodeEditor: FC<any> = ({ data }) => {
     setSaving(false);
   };
 
-  const openExternalEditor = () => {
-    let url: any = (`vscode://file/D:\\Projects\\flowker\\client\\scripts\\${currentNode.id}.py`) as string;
+  const openExternalEditor = async  () => {
+    let originalId = currentNode.id || 'new';
+    let extenalResponseConfirmation = await http.get(`/node/external/create?nodeId=${originalId}&externalId=${externalId}`);
+    if(extenalResponseConfirmation.status != 200){
+      console.warn('Error when try to create a external file clone to open in your computer!');
+      return;
+    }
+    let url: any = (`vscode://file/C:\\projects\\flowker\\flowker\\client\\scripts\\external\\${originalId}_ext_${externalId}.py`) as string;
     window.open(url, '_blank')?.focus();
 
     let w: any = window;
     clearInterval(w['externalCheckerInterval']);
     w['externalCheckerInterval'] = setInterval(async () => {
-      let codeFromExternal = (await http.get(`/node/get/script/raw/${currentNode.id}`)).data;
-      let _currNode: any = { ...currentNode };
-      if (_currNode.script !== codeFromExternal) {
-        _currNode.script = codeFromExternal;
-        setCurrentNode(_currNode);
+      try {
+        let externalResponse = await http.get(`/node/external/get/script/raw?nodeId=${originalId}&externalId=${externalId}`);
+        let codeFromExternal = externalResponse.data;
+        console.log(externalResponse.status);
+        if(externalResponse.status == 204){
+          clearInterval(w['externalCheckerInterval']);
+        }
+        let _currNode: any = { ...currentNode };
+        if (_currNode.script !== codeFromExternal) {
+          _currNode.script = codeFromExternal;
+          setCurrentNode(_currNode);
+        }
+      } catch (error) {
+        clearInterval(w['externalCheckerInterval']);
       }
     }, 1500);
   }
